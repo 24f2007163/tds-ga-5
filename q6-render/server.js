@@ -14,6 +14,13 @@ http.createServer((req,res)=>{
   let raw=''; req.on('data',c=>{raw+=c;if(raw.length>1048576)req.destroy();});
   req.on('end',()=>{
     let m; try{m=JSON.parse(raw);}catch{return send(res,400,error(null,-32700,'Parse error'));}
+    if(req.url==='/proration') {
+      const {old_price,new_price,days_remaining,days_in_actual_month,spec}=m;
+      if(!['v1','v2'].includes(spec)||![old_price,new_price,days_remaining,days_in_actual_month].every(Number.isFinite)) return send(res,400,{error:'Invalid input'});
+      const divisor=spec==='v1'?30:days_in_actual_month;
+      if(divisor<=0) return send(res,400,{error:'Invalid days_in_actual_month'});
+      return send(res,200,{charge:(new_price-old_price)*(days_remaining/divisor)});
+    }
     if(!Object.prototype.hasOwnProperty.call(m,'id')) return send(res,202);
     if(m.method==='initialize') return send(res,200,result(m.id,{protocolVersion:m.params?.protocolVersion||'2025-03-26',capabilities:{tools:{listChanged:false}},serverInfo:{name:'tds-ga5-challenge',version:'1.0.0'}}));
     if(m.method==='ping') return send(res,200,result(m.id,{}));
