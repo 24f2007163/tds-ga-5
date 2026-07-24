@@ -32,9 +32,10 @@ function handle(b){
   if(b.profile!==PROFILE||typeof b.evaluationId!=="string"||!Array.isArray(b.dossiers)||!b.dossiers.length||b.receiptVerifier?.algorithm!=="Ed25519"||!b.receiptVerifier.publicKeyJwk)fail("Invalid propose",400);
   if(new Set(b.dossiers.map(d=>d.dossierId)).size!==b.dossiers.length)fail("Duplicate dossiers");
   let h=sha(b),old=s.evaluations[b.evaluationId];if(old){if(old.requestHash!==h)fail("Conflict",409);return old.proposeResponse}
+  s.lastPropose=b;save(s);
   let inputDigest=sha(b.dossiers),proposals=b.dossiers.map(d=>{let f=sha(d);if(!s.decisions[f])s.decisions[f]=decide(d);return{...s.decisions[f],dossierId:d.dossierId}});
   let response={profile:PROFILE,evaluationId:b.evaluationId,status:"awaiting_receipts",inputDigest,proposals};
-  s.evaluations[b.evaluationId]={requestHash:h,inputDigest,key:b.receiptVerifier.publicKeyJwk,proposals,proposeResponse:response};s.lastPropose=b;save(s);return response;
+  s.evaluations[b.evaluationId]={requestHash:h,inputDigest,key:b.receiptVerifier.publicKeyJwk,proposals,proposeResponse:response};save(s);return response;
  }
  if(b?.operation==="commit"){
   if(b.profile!==PROFILE||typeof b.evaluationId!=="string"||!Array.isArray(b.receipts))fail("Invalid commit",400);
