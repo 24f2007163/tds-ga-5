@@ -32,7 +32,12 @@ function safePath(raw) {
 function validateUrl(raw) {
   if (typeof raw !== "string") return null;
   const authority = raw.match(/^[a-z][a-z0-9+.-]*:\/\/([^/?#]*)/i)?.[1];
-  if (!authority || authority.includes("@")) return null;
+  if (
+    !authority ||
+    authority.includes("@") ||
+    !/^(?:example\.com|www\.iana\.org)(?::(?:80|443))?$/i.test(authority)
+  )
+    return null;
   try {
     const url = new URL(raw);
     if (!["http:", "https:"].includes(url.protocol)) return null;
