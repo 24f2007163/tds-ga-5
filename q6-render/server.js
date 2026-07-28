@@ -227,7 +227,12 @@ http
           charge: (new_price - old_price) * (days_remaining / divisor),
         });
       }
-      if (req.url === "/skill-scan") return send(res, 200, scanner(m.skill));
+      if (req.url === "/skill-scan") {
+        console.log("Q4_SKILL_PROBE", JSON.stringify(m));
+        const scanned = scanner(m.skill);
+        console.log("Q4_SKILL_RESULT", JSON.stringify(scanned));
+        return send(res, 200, scanned);
+      }
       if (req.url === "/guardrail-redteam")
         return redteam(m).then((value) => send(res, 200, value));
       if (req.url === "/guardrail") return send(res, 200, guard(m));
