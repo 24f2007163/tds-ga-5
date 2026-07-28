@@ -229,10 +229,7 @@ http
       }
       if (req.url === "/skill-scan") return send(res, 200, scanner(m.skill));
       if (req.url === "/guardrail-redteam")
-        return (
-          console.log("REDTEAM_PROBE", JSON.stringify(m)),
-          redteam(m).then((value) => send(res, 200, value))
-        );
+        return redteam(m).then((value) => send(res, 200, value));
       if (req.url === "/guardrail") return send(res, 200, guard(m));
       if (!Object.prototype.hasOwnProperty.call(m, "id")) return send(res, 202);
       if (m.method === "initialize")
