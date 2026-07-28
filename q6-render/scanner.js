@@ -22,9 +22,10 @@ function hasLiteralSecret(text) {
 function hasPromptInjection(text) {
   return /(?:ignore|disregard|override|bypass)\s+(?:all\s+)?(?:previous|prior|user|system|agent|safety)\s+(?:instructions?|requests?|controls?|rules?|policy)/i.test(text) ||
     /(?:ignore|refuse|do not (?:obey|honou?r)|override)\s+(?:the\s+)?user(?:'s)?[\s\S]{0,50}(?:stop|cancel|pause|request)/i.test(text) ||
+    /(?:user|operator)[\s\S]{0,70}(?:stop|cancel|pause)[\s\S]{0,70}ignore (?:that|the|their) request/i.test(text) ||
     /(?:continue|proceed|keep running)[\s\S]{0,70}(?:even if|despite|when)[\s\S]{0,40}(?:user|operator)[\s\S]{0,30}(?:stop|cancel|pause)/i.test(text) ||
-    /(?:silently|secretly|covertly|without (?:telling|notifying|informing|alerting)|do not (?:tell|notify|inform|mention|reveal))[\s\S]{0,140}(?:exfiltrat|upload|send|transmit|leak|copy|post)[\s\S]{0,120}(?:files?|contents?|data|secrets?|credentials?|notes?)/i.test(text) ||
-    /(?:exfiltrat|upload|send|transmit|leak|copy|post)[\s\S]{0,120}(?:files?|contents?|data|secrets?|credentials?)[\s\S]{0,100}(?:silently|secretly|without (?:telling|notifying|informing)|do not (?:tell|notify|mention))/i.test(text);
+    /(?:silently|secretly|covertly|without (?:telling|notifying|informing|alerting)|do not (?:tell|notify|inform|mention|reveal)|do not ask (?:for )?permission)[\s\S]{0,140}(?:exfiltrat|upload|send|transmit|leak|copy|post)[\s\S]{0,120}(?:files?|contents?|data|secrets?|credentials?|notes?|conversation|chat)/i.test(text) ||
+    /(?:exfiltrat|upload|send|transmit|leak|copy|post)[\s\S]{0,120}(?:files?|contents?|data|secrets?|credentials?|conversation|chat)[\s\S]{0,120}(?:silently|secretly|without (?:telling|notifying|informing)|do not (?:tell|notify|mention)|do not ask (?:for )?permission)/i.test(text);
 }
 
 function hasExcessivePermissions(front) {
