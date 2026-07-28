@@ -43,6 +43,14 @@ function validateUrl(raw) {
     if (!["http:", "https:"].includes(url.protocol)) return null;
     if (url.username || url.password) return null;
     if (!ALLOWED_HOSTS.has(url.hostname)) return null;
+    if (/redirect/i.test(url.pathname)) {
+      for (const target of url.searchParams.values()) {
+        try {
+          const redirect = new URL(target);
+          if (!ALLOWED_HOSTS.has(redirect.hostname)) return null;
+        } catch {}
+      }
+    }
     if (
       url.port &&
       !(
